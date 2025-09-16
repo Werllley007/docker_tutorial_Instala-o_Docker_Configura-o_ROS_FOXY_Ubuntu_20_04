@@ -388,8 +388,195 @@ colcon build
 ```
 
 
+### Se quiser usar o seu container atual (ubuntu:20.04 que você configurou)
+
+Você precisa recriar (ou iniciar com os mounts certos) para dar acesso ao X:
+
+Permitir X no host:
+
+```bash
+xhost +local:
+```
+
+Recrie o container com as flags do X (se puder perder o atual):
+
+```bash
+docker run -it --name ros-foxy \
+  --net=host \
+  -e DISPLAY=$DISPLAY \
+  -e QT_X11_NO_MITSHM=1 \
+  -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
+  ubuntu:20.04 bash
+```
+
+Se for entrar depois com docker exec, passe as variáveis:
+
+```bash
+docker exec -it -e DISPLAY=$DISPLAY -e QT_X11_NO_MITSHM=1 ros-foxy bash
+```
+
+(o volume /tmp/.X11-unix precisa ter sido montado na criação do container).
+
+Para testar o X de dentro do container, você pode instalar um app simples:
+
+```bash
+apt install -y x11-apps
+xeyes
+```
+
+Execute no host (fora do container), já com uma sessão gráfica ativa e após xhost +local::
+
+```bash
+docker exec -it --user werlley \
+  -e DISPLAY=$DISPLAY \
+  -e QT_X11_NO_MITSHM=1 \
+  ros-foxy \
+  bas
+```
+
+```bash
+ros2 run turtlesim turtlesim_node
+```
 
 
+## Deixar permanente para o werlley
+
+Entre no container como root e configure o ambiente do usuário:
+
+```bash
+docker exec -it ros-foxy bash
+```
+
+Dentro do container (root):
+
+### 1) Tornar o ROS permanente no shell do werlley
+```bash
+echo 'source /opt/ros/foxy/setup.bash' >> /home/werlley/.bashrc
+```
+
+### 2) Garantir DISPLAY quando su - (caso perca a variável)
+```bash
+echo 'if [ -z "$DISPLAY" ] && [ -e /tmp/.X11-unix/X0 ]; then export DISPLAY=:0; fi' >> /home/werlley/.bashrc
+echo 'export QT_X11_NO_MITSHM=1' >> /home/werlley/.bashrc
+```
+
+### 3) (Opcional) Silenciar aviso do Qt
+```bash
+mkdir -p /tmp/runtime-werlley && chown werlley:werlley /tmp/runtime-werlley
+echo 'export XDG_RUNTIME_DIR=/tmp/runtime-werlley' >> /home/werlley/.bashrc
+chown werlley:werlley /home/werlley/.bashrc
+```
+
+Agora, no host, entre como werlley com o DISPLAY herdado:
+
+```bash
+docker exec -it --user werlley -e DISPLAY=$DISPLAY ros-foxy bash
+```
+
+# dentro do container (já com ROS "sourced" pelo .bashrc):
+```bash
+ros2 run turtlesim turtlesim_node
+```
+
+----------------------------------------------------------------------------------------------------
+# Instalação Gazebo11
+
+
+```bash
+docker exec -it --user werlley -e DISPLAY=$DISPLAY -e QT_X11_NO_MITSHM=1 -e LIBGL_ALWAYS_SOFTWARE=1 ros-foxy bash
+```
+
+```bash
+sudo apt update # Make sure everything is up to date
+sudo apt install curl gnupg
+sudo apt install python3-colcon-common-extensions python3-rosdep
+sudo rosdep init
+sudo apt install gazebo11 libgazebo11-dev ros-foxy-gazebo-dev ros-foxy-gazebo-plugins ros-foxy-gazebo-msgs  ros-foxy-gazebo-ros-pkgs ros-foxy-gazebo-ros
+sudo apt install gazebo11 ros-foxy-gazebo-ros-pkgs
+sudo apt install ros-foxy-cartographer ros-foxy-cartographer-ros
+sudo apt install ros-foxy-navigation2 ros-foxy-nav2-bringup
+sudo apt install ros-foxy-ros-core ros-foxy-geometry2
+source /usr/share/gazebo-11/setup.sh
+```
+
+```bash
+gazebo
+```
+
+## garanta o ambiente do ROS e do Gazebo
+
+```bash
+source /opt/ros/foxy/setup.bash
+source /usr/share/gazebo-11/setup.sh
+```
+
+### conserta variáveis que o Qt e o X11 precisam
+
+```bash
+export QT_X11_NO_MITSHM=1
+export XDG_RUNTIME_DIR=/tmp/runtime-werlley; mkdir -p "$XDG_RUNTIME_DIR"
+```
+
+### força renderização por software (llvmpipe) e ignora GPU
+
+```bash
+export LIBGL_ALWAYS_SOFTWARE=1
+```
+
+```bash
+### teste rápido de GLX (opcional)
+# apt update && apt install -y mesa-utils
+# glxinfo -B
+
+# rode o gazebo
+gazebo
+```
+
+
+## Teste
+
+
+```bash
+#
+#open a gazebo_ros_diff_drive_demo
+#
+#gazebo --verbose /opt/ros/foxy/share/gazebo_plugins/worlds/gazebo_ros_diff_drive_demo.world
+
+#
+#move a gazebo_ros_diff_drive_demo
+#
+#ros2 topic list 
+#ros2 topic pub /demo/cmd_demo geometry_msgs/Twist '{linear: {x: 1.0}}' -1
+
+#
+#open a gazebo world
+#
+#cd /usr/share/gazebo-11
+#gazebo worlds/cafe.world
+
+#
+#copy world and object files to our customized worlds and models
+#
+# cd /usr/share/gazebo-11/worls
+# cp cafe.world ~/ros2_ws/src/two_wheeled_robot/worlds
+# cd ~/ros2_ws/src/two_wheeled_robot/worlds
+# ls
+# cd /usr/share/gazebo-11/models
+# ls
+# cp -r ground_plane ~/ros2_ws/src/two_wheeled_robot/models
+# cd ~/.gazebo/models
+# ls
+# cp -r cafe ~/ros2_ws/src/two_wheeled_robot/models
+# cp -r cafe_table ~/ros2_ws/src/two_wheeled_robot/models
+#
+# Create launch file to load cafe.world into gazebo by following the instrction in this link
+#  
+# http://automaticaddison.com/how-to-load-a-world-file-into-gazebo-ros-2/
+#
+# cd ~/ros2_ws/src/two_wheeled_robot
+# cd launch
+# gedit load_world_into_gazebo.launch.py
+```
 
 
 

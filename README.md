@@ -168,6 +168,27 @@ sudo comando
 (Mas isso só funciona se você instalou o sudo dentro do container e configurou.)
 
 
+## Sair e voltar ao container
+
+Para sair:
+
+```bash
+exit
+```
+
+Para reabrir depois:
+
+```bash
+docker start -ai ros-foxy
+```
+
+Para abrir outro shell no mesmo container:
+
+```bash
+docker exec -it ros-foxy bash
+```
+
+
 
 
 
@@ -189,7 +210,7 @@ Para instalações locais, pule esta etapa se o sudo já estiver instalado.
 
 Se o comando sudo (Super User Do) estiver instalado, prossiga de acordo com o documento.
 
-**Usei este link para instalar o ros2 foxy**: [ROS 2 Documentation – Installation Guide](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html#install-ros-2-packages)
+**Link para instalar o ROS2 Foxy**: [ROS 2 Documentation – Installation Guide](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html#install-ros-2-packages)
 
 Prosseguir com todas as etapas em ordem é a maneira mais rápida de instalar sem erros.
 
@@ -311,6 +332,8 @@ Em outro terminal, crie o arquivo de configuração e execute um Python listener
 source /opt/ros/foxy/setup.bash
 ros2 run demo_nodes_py listener
 ```
+
+
 
 
 

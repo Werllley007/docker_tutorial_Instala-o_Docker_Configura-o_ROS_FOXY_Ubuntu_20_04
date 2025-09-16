@@ -167,7 +167,7 @@ sudo comando
 
 (Mas isso só funciona se você instalou o sudo dentro do container e configurou.)
 
-
+# Tutorial de Instalação e Configuração ROS Foxy - Ubuntu 20.04
 
 ## Definir localidade
 Certifique-se de ter uma localidade compatível com UTF-8. Se você estiver em um ambiente minimalista (como um contêiner Docker), a localidade pode ser algo minimalista, como POSIX. Testamos com as seguintes configurações. No entanto, deve funcionar se você estiver usando uma localidade diferente compatível com UTF-8.

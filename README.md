@@ -145,27 +145,39 @@ Agora, execute o comando groups para verificar se o usuário foi adicionado ao g
 groups $USER
 ```
 
+
+
+
+----------------------------------------------------------------------------------------------------
+# Tutorial de Instalação Ubuntu 20.04
+```bash
+docker pull ubuntu:20.04
+```
+
+```bash
+docker run -it --name ros-foxy --network host ubuntu:20.04 bash
+```
+
 ### Como “sair do modo root” dentro do Docker
 
 Primeiro crie um usuário normal dentro do container (se quiser usar algo parecido com o comportamento do sudo):
 
 ```bash
-adduser usuario
+adduser werlley
+apt update
 apt install sudo -y
-usermod -aG sudo usuario
+usermod -aG sudo werlley
 ```
 
 Então troque para esse usuário:
 ```bash
-su - usuario
+su - werlley
 ```
 
 E quando precisar de root novamente:
 ```bash
 sudo comando
 ```
-
-(Mas isso só funciona se você instalou o sudo dentro do container e configurou.)
 
 
 ## Sair e voltar ao container
@@ -188,12 +200,22 @@ Para abrir outro shell no mesmo container:
 docker exec -it ros-foxy bash
 ```
 
+```bash
+docker start ros-foxy
+docker exec -it --user werlley ros-foxy bash
+```
+
+(Mas isso só funciona se você instalou o sudo dentro do container e configurou.)
+
+
+
+
 
 
 
 
 ----------------------------------------------------------------------------------------------------
-# Tutorial de Instalação e Configuração ROS Foxy - Ubuntu 20.04
+# Tutorial de Instalação e Configuração ROS Foxy 
 
 
 ## Configuração inicial:
@@ -203,7 +225,7 @@ Se você estiver usando a imagem do Ubuntu 20.04 em um ambiente Docker, execute 
 
 ```bash
 apt update
-apt install sudo
+sudo apt install sudo
 ```
 
 Para instalações locais, pule esta etapa se o sudo já estiver instalado.
@@ -334,6 +356,36 @@ ros2 run demo_nodes_py listener
 ```
 
 
+
+
+
+
+
+----------------------------------------------------------------------------------------------------
+# Criando um Workspace
+
+```bash
+mkdir -p ~/ros2_ws/src
+cd ~/ros2_ws/src
+```
+
+Um repositório pode ter várias ramificações. Você precisa verificar aquela que tem como alvo a sua distribuição ROS 2 instalada. Ao clonar este repositório, adicione o -bargumento seguido por essa ramificação.
+
+No ros2_ws/srcdiretório, execute o seguinte comando:
+
+```bash
+git clone https://github.com/ros/ros_tutorials.git -b foxy-devel
+```
+
+```bash
+# cd if you're still in the ``src`` directory with the ``ros_tutorials`` clone
+cd ..
+rosdep install -i --from-path src --rosdistro foxy -y
+```
+
+```bash
+colcon build
+```
 
 
 

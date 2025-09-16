@@ -167,6 +167,11 @@ sudo comando
 
 (Mas isso só funciona se você instalou o sudo dentro do container e configurou.)
 
+
+
+
+
+----------------------------------------------------------------------------------------------------
 # Tutorial de Instalação e Configuração ROS Foxy - Ubuntu 20.04
 
 ## Definir localidade
@@ -226,17 +231,33 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-a
 ## Instalar pacotes ROS 2
 Atualize os caches do seu repositório apt depois de configurar os repositórios.
 
+```bash
 sudo apt update
+```
+
 Os pacotes ROS 2 são compilados em sistemas Ubuntu atualizados com frequência. É sempre recomendável que você verifique se o seu sistema está atualizado antes de instalar novos pacotes.
 
+```bash
 sudo apt upgrade
+```
+
 Instalação para desktop (recomendado): ROS, RViz, demonstrações, tutoriais.
 
+```bash
 sudo apt install ros-foxy-desktop python3-argcomplete
+```
 
+Instalação básica do ROS (básico): bibliotecas de comunicação, pacotes de mensagens, ferramentas de linha de comando. Sem ferramentas de interface gráfica.
 
+```bash
+sudo apt install ros-foxy-ros-base python3-argcomplete
+```
 
+Ferramentas de desenvolvimento: Compiladores e outras ferramentas para construir pacotes ROS
 
+```bash
+sudo apt install ros-dev-tools
+```
 
 
 

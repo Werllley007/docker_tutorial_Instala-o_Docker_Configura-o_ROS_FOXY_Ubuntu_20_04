@@ -174,6 +174,25 @@ sudo comando
 ----------------------------------------------------------------------------------------------------
 # Tutorial de Instalação e Configuração ROS Foxy - Ubuntu 20.04
 
+
+## Configuração inicial:
+ 
+
+Se você estiver usando a imagem do Ubuntu 20.04 em um ambiente Docker, execute os seguintes comandos para a configuração inicial:
+
+```bash
+apt update
+apt install sudo
+```
+
+Para instalações locais, pule esta etapa se o sudo já estiver instalado.
+
+Se o comando sudo (Super User Do) estiver instalado, prossiga de acordo com o documento.
+
+**Usei este link para instalar o ros2 foxy**: [ROS 2 Documentation – Installation Guide](https://docs.ros.org/en/foxy/Installation/Ubuntu-Install-Debians.html#install-ros-2-packages)
+
+Prosseguir com todas as etapas em ordem é a maneira mais rápida de instalar sem erros.
+
 ## Definir localidade
 Certifique-se de ter uma localidade compatível com UTF-8. Se você estiver em um ambiente minimalista (como um contêiner Docker), a localidade pode ser algo minimalista, como POSIX. Testamos com as seguintes configurações. No entanto, deve funcionar se você estiver usando uma localidade diferente compatível com UTF-8.
 
@@ -259,8 +278,64 @@ Ferramentas de desenvolvimento: Compiladores e outras ferramentas para construir
 sudo apt install ros-dev-tools
 ```
 
+## Configuração do ambiente
+
+### Obtendo o script de configuração
+
+Configure seu ambiente obtendo o seguinte arquivo.
+
+```bash
+source /opt/ros/foxy/setup.bash
+```
+
+Ative o ambiente do ROS no shell:
+
+```bash
+echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
+source ~/.bashrc
+```
+
+### Experimente alguns exemplos
+Se você instalou ros-foxy-desktopo acima, pode tentar alguns exemplos.
+
+Em um terminal, crie o arquivo de instalação e execute um C++ talker:
+
+```bash
+source /opt/ros/foxy/setup.bash
+ros2 run demo_nodes_cpp talker
+```
+
+Em outro terminal, crie o arquivo de configuração e execute um Python listener:
+
+```bash
+source /opt/ros/foxy/setup.bash
+ros2 run demo_nodes_py listener
+```
 
 
+
+
+
+
+
+----------------------------------------------------------------------------------------------------
+# Desinstalar ROS Foxy
+
+Se você precisar desinstalar o ROS 2 ou mudar para uma instalação baseada em código-fonte depois de já ter instalado a partir dos binários, execute o seguinte comando:
+
+```bash
+sudo apt remove ~nros-foxy-* && sudo apt autoremove
+```
+
+Você também pode querer remover o repositório:
+
+```bash
+sudo rm /etc/apt/sources.list.d/ros2.list
+sudo apt update
+sudo apt autoremove
+# Consider upgrading for packages previously shadowed.
+sudo apt upgrade
+```
 
 ----------------------------------------------------------------------------------------------------
 # Como desistalar o docker completamente

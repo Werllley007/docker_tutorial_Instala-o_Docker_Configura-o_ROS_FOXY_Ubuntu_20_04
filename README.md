@@ -1,0 +1,275 @@
+# Tutorial de Instalação do Docker
+
+Este tutorial vai guiá-lo na instalação do Docker para Ubuntu 24.04.
+
+## Etapa 1: Atualizar o sistema e instalar dependências
+
+Para começar, faça login no seu servidor e atualize o índice de pacotes definido no arquivo `/etc/apt/sources.list` e no diretório `/etc/apt/sources.list.d/`.
+
+```bash
+sudo apt update  -y
+sudo apt upgrade -y
+```
+
+Algumas dependências são necessárias para que a instalação prossiga sem problemas. Execute o comando abaixo para instalá-las.
+
+```bash
+sudo apt install curl apt-transport-https ca-certificates software-properties-common
+```
+Agora que as listas de pacotes estão atualizadas e as dependências necessárias estão instaladas, podemos proceder com a instalação do Docker.
+
+## Etapa 2: Instalar o Docker
+
+Existem duas maneiras de instalar o Docker no Ubuntu. Primeiro, você pode instalá-lo a partir dos repositórios padrão usando o gerenciador de pacotes APT.
+
+Instalar Docker da versão padrão
+```bash
+sudo apt install docker.io -y
+
+sudo apt install docker.io docker-compose
+```
+
+No entanto, a versão instalada não é a mais recente. Para instalar a versão mais atual, você precisará instalá-lo a partir do repositório oficial do Docker.
+
+### Instalar a versão mais recente do Docker
+
+Para isso, baixe a chave GPG do Docker usando o comando curl, conforme mostrado abaixo.
+
+```bash
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+```
+
+Em seguida, adicione o repositório APT do Docker ao seu sistema. O comando cria um arquivo docker.list no diretório /etc/apt/sources.list.d/.
+
+```bash
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+```
+
+Agora, atualize o índice de pacotes local para notificar o sistema sobre o novo repositório adicionado.
+
+```bash
+sudo apt update
+```
+
+Agora instale o Docker Community Edition (grátis para download e uso) com o seguinte comando. A opção -y permite a instalação não interativa.
+
+```bash
+sudo apt install docker-ce -y
+```
+
+O serviço do Docker será iniciado automaticamente após a instalação. Você pode verificar seu status executando o comando:
+
+```bash
+sudo systemctl enable --now docker
+
+sudo systemctl status docker
+```
+
+A saída abaixo confirma que o Docker está funcionando conforme esperado.
+
+```bash
+● docker.service - Docker Application Container Engine
+     Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; preset: enabled)
+     Active: active (running) since Fri 2025-08-29 14:48:20 -03; 31s ago
+ Invocation: bb66509093e443149ff23146cc2f12f6
+TriggeredBy: ● docker.socket
+       Docs: https://docs.docker.com
+   Main PID: 1344389 (dockerd)
+      Tasks: 14
+     Memory: 22.4M (peak: 24.6M)
+        CPU: 305ms
+     CGroup: /system.slice/docker.service
+             └─1344389 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+
+Aug 29 14:48:19 werlley-ssd dockerd[1344389]: time="2025-08-29T14:48:19.890919288-03:00" level=info msg="[graphdriver] using prior storage driver: overlay2"
+lines 1-14
+```
+
+## Install Docker Engine:
+
+```bash
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt update
+sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+```
+
+## Deploy Portainer CE:
+```bash
+sudo docker volume create portainer_data
+sudo docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
+```
+
+Acesso pelo o link:
+
+```bash
+https://localhost:9443/
+```
+
+## Etapa 3: Adicionar o usuário ao grupo Docker
+
+Por padrão, o Docker é configurado para rodar como root ou um usuário regular com privilégios elevados (usuário sudo). A implicação disso é que apenas o root ou o usuário sudo pode executar os comandos do Docker. Executar os comandos do Docker como um usuário regular resultará em uma mensagem de "erro de permissão".
+
+Como já temos um usuário sudo chamado werlley configurado, executar o Docker com esse usuário é perfeitamente possível. Uma opção ainda melhor é adicionar o usuário que está logado, neste caso, werlley, ao grupo docker. Isso garante que não precisemos invocar o sudo sempre que executarmos comandos do Docker, já que o usuário já pertence ao grupo docker.
+
+Se você quiser evitar digitar sudosempre que executar o dockercomando, adicione seu nome de usuário ao dockergrupo:
+
+```bash
+sudo groupadd docker
+```
+
+```bash
+sudo usermod -aG docker $USER
+
+groups
+```
+
+Para aplicar a nova associação ao grupo, saia do servidor e entre novamente ou digite o seguinte:
+
+```bash
+newgrp $USER
+
+su - $USER
+```
+
+Confirme se seu usuário foi adicionado ao grupo docker digitando:
+
+```bash
+groups
+```
+
+Agora, execute o comando groups para verificar se o usuário foi adicionado ao grupo docker:
+
+```bash
+groups $USER
+```
+
+### Como “sair do modo root” dentro do Docker
+
+Primeiro crie um usuário normal dentro do container (se quiser usar algo parecido com o comportamento do sudo):
+
+```bash
+adduser usuario
+apt install sudo -y
+usermod -aG sudo usuario
+```
+
+Então troque para esse usuário:
+```bash
+su - usuario
+```
+
+E quando precisar de root novamente:
+```bash
+sudo comando
+```
+
+(Mas isso só funciona se você instalou o sudo dentro do container e configurou.)
+
+
+
+## Definir localidade
+Certifique-se de ter uma localidade compatível com UTF-8. Se você estiver em um ambiente minimalista (como um contêiner Docker), a localidade pode ser algo minimalista, como POSIX. Testamos com as seguintes configurações. No entanto, deve funcionar se você estiver usando uma localidade diferente compatível com UTF-8.
+
+```bash
+locale  # check for UTF-8
+
+sudo apt update && sudo apt install locales
+sudo locale-gen en_US en_US.UTF-8
+sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+export LANG=en_US.UTF-8
+
+locale  # verify settings
+```
+
+## Configurar fontes
+
+Você precisará adicionar o repositório apt do ROS 2 ao seu sistema.
+
+Primeiro, certifique-se de que o repositório Ubuntu Universe esteja habilitado.
+
+```bash
+sudo apt install software-properties-common
+sudo add-apt-repository universe
+```
+
+Agora adicione a chave ROS 2 GPG com o apt.
+
+### 1) Apague a lista quebrada
+```bash
+sudo rm /etc/apt/sources.list.d/ros2.list
+```
+
+### 2) Pré-requisitos e chave GPG
+```bash
+sudo apt update
+sudo apt install -y curl gnupg2 lsb-release
+```
+
+```bash
+sudo mkdir -p /usr/share/keyrings
+curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \
+  | sudo gpg --dearmor -o /usr/share/keyrings/ros-archive-keyring.gpg
+```
+
+### 3) Adicione o repositório com aspas retas e dois hifens
+
+Para Ubuntu 20.04 use focal (não deixe o comando deduzir automaticamente se sua máquina não é 20.04).
+
+```bash
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu focal main" \
+| sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+```
+
+
+## Instalar pacotes ROS 2
+Atualize os caches do seu repositório apt depois de configurar os repositórios.
+
+sudo apt update
+Os pacotes ROS 2 são compilados em sistemas Ubuntu atualizados com frequência. É sempre recomendável que você verifique se o seu sistema está atualizado antes de instalar novos pacotes.
+
+sudo apt upgrade
+Instalação para desktop (recomendado): ROS, RViz, demonstrações, tutoriais.
+
+sudo apt install ros-foxy-desktop python3-argcomplete
+
+
+
+
+
+
+
+
+----------------------------------------------------------------------------------------------------
+# Como desistalar o docker completamente
+
+- Passo 1:
+
+```bash
+dpkg -l | grep -i docker
+```
+- Passo 2:
+
+```bash
+sudo apt-get purge -y docker-engine docker docker.io docker-ce docker-ce-cli docker-compose-plugin
+
+sudo apt-get autoremove -y --purge docker-engine docker docker.io docker-ce docker-compose-plugin
+
+sudo apt remove docker-buildx-plugin
+```
+
+Os comandos acima não removerão imagens, contêineres, volumes ou arquivos de configuração criados pelo usuário no seu host. Se desejar excluir todas as imagens, contêineres e volumes, execute os seguintes comandos:
+
+
+```bash
+sudo rm -rf /var/lib/docker /etc/docker
+sudo rm /etc/apparmor.d/docker
+sudo groupdel docker
+sudo rm -rf /var/run/docker.sock
+sudo rm -rf /var/lib/containerd
+sudo rm -r ~/.docker
+sudo apt autoremove
+```
+
+Removido o Docker completamente do sistema.

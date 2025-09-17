@@ -545,6 +545,18 @@ export LIBGL_ALWAYS_SOFTWARE=1
 gazebo
 ```
 
+## Se você já está como werlley (dentro do container)
+
+```bash
+grep -qxF 'export LIBGL_ALWAYS_SOFTWARE=1' ~/.bashrc || \
+echo 'export LIBGL_ALWAYS_SOFTWARE=1' >> ~/.bashrc
+
+# aplica agora nesta sessão
+source ~/.bashrc
+
+# conferir
+echo $LIBGL_ALWAYS_SOFTWARE   # deve mostrar 1
+```
 
 ## Teste
 

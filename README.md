@@ -605,6 +605,39 @@ echo $LIBGL_ALWAYS_SOFTWARE   # deve mostrar 1
 
 
 
+
+
+----------------------------------------------------------------------------------------------------
+# Configurando RVIZ
+
+## No host (fora do container), garanta X11 aberto e libere acesso
+```bash
+echo $DISPLAY                 # deve sair algo tipo :0
+xhost +SI:localuser:root
+xhost +SI:localuser:werlley
+xhost +local:
+```
+
+Se echo $DISPLAY vier vazio, você não está em sessão gráfica — entre numa sessão Xorg/XWayland primeiro.
+
+```bash
+rviz2
+```
+
+CASO não Funcione então:
+
+```bash
+docker run -it --name ros-foxy-gui \
+  --net=host \
+  -e DISPLAY=$DISPLAY \
+  -e QT_X11_NO_MITSHM=1 \
+  -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
+  --device /dev/dri:/dev/dri \
+  ros-foxy:withros bash
+```
+
+
+
 ----------------------------------------------------------------------------------------------------
 # Desinstalar ROS Foxy
 

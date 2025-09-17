@@ -431,7 +431,7 @@ docker exec -it --user werlley \
   -e DISPLAY=$DISPLAY \
   -e QT_X11_NO_MITSHM=1 \
   ros-foxy \
-  bas
+  bash
 ```
 
 ```bash

@@ -478,6 +478,15 @@ docker exec -it --user werlley -e DISPLAY=$DISPLAY ros-foxy bash
 ros2 run turtlesim turtlesim_node
 ```
 
+
+
+
+
+
+
+
+
+
 ----------------------------------------------------------------------------------------------------
 # Instalação Gazebo11
 
@@ -500,6 +509,10 @@ source /usr/share/gazebo-11/setup.sh
 ```
 
 ```bash
+
+echo "source /usr/share/gazebo-11/setup.sh" >> ~/.bashrc
+source ~/.bashrc
+
 gazebo
 ```
 

@@ -636,6 +636,33 @@ docker run -it --name ros-foxy-gui \
   ros-foxy:withros bash
 ```
 
+Se você já criou o ros-foxy com -v /tmp/.X11-unix:/tmp/.X11-unix, pode pular esse passo.
+
+
+## Dentro do container, rodar como werlley com o ambiente certo
+
+```bash
+# entre como werlley já herdando DISPLAY do host
+docker exec -it --user werlley -e DISPLAY=$DISPLAY ros-foxy-gui bash
+
+# dentro do shell do werlley:
+export QT_X11_NO_MITSHM=1
+export XDG_RUNTIME_DIR=/tmp/runtime-werlley; mkdir -p "$XDG_RUNTIME_DIR"
+
+source /opt/ros/foxy/setup.bash
+
+# (opcional: software rendering se aparecer erro do Mesa)
+# export LIBGL_ALWAYS_SOFTWARE=1
+
+rviz2
+```
+
+
+
+
+
+
+
 
 
 ----------------------------------------------------------------------------------------------------

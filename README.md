@@ -438,6 +438,14 @@ docker exec -it --user werlley \
 ros2 run turtlesim turtlesim_node
 ```
 
+```bash
+ros2 run turtlesim turtle_teleop_key
+```
+
+```bash
+ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r cmd_vel:=/turtle1/cmd_vel
+```
+
 
 ## Deixar permanente para o werlley
 

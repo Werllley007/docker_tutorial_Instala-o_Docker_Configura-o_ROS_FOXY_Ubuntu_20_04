@@ -666,9 +666,30 @@ rviz2
 ```
 
 
+## Dentro do container (bash):
+
+### Define a variável que o ROS está reclamando, embora não seja o foco do erro
+export XDG_RUNTIME_DIR=/tmp/runtime-melo/ && mkdir -p "$XDG_RUNTIME_DIR"
+
+### Configura o ambiente ROS
+source /opt/ros/foxy/setup.bash
+
+### A variável abaixo é opcional, mas pode ajudar com alguns erros específicos do Qt/X11
+export QT_X11_NO_MITSHM=1
+
+### Tente rodar o RVIZ2
+rviz2
 
 
 
+----------------------------------------------------------------------------------------------------
+# Finalmente temos instalado ROS Foxy, Gazebo e RVIZ2
+
+Para executar o conteiner:
+
+```bash
+docker exec -it --user werlley -e DISPLAY=$DISPLAY -e QT_X11_NO_MITSHM=1 -e LIBGL_ALWAYS_SOFTWARE=1 ros-foxy bash
+```
 
 
 

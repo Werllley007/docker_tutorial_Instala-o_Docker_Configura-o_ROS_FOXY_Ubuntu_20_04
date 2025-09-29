@@ -685,6 +685,14 @@ rviz2
 ----------------------------------------------------------------------------------------------------
 # Finalmente temos instalado ROS Foxy, Gazebo e RVIZ2
 
+Caso apresente erro no DISPLAY, no bashrc:
+
+```bash
+if [ -z "$DISPLAY" ]; then
+    export DISPLAY=${DISPLAY:-:0}
+fi
+```
+
 Para executar o conteiner:
 
 ```bash

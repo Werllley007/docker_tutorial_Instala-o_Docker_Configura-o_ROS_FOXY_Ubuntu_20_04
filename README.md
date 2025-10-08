@@ -334,6 +334,8 @@ source /opt/ros/foxy/setup.bash
 Ative o ambiente do ROS no shell:
 
 ```bash
+sudo apt install nano
+
 echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 ```
@@ -374,6 +376,8 @@ Um repositório pode ter várias ramificações. Você precisa verificar aquela 
 No ros2_ws/srcdiretório, execute o seguinte comando:
 
 ```bash
+sudo apt install git -y
+
 git clone https://github.com/ros/ros_tutorials.git -b foxy-devel
 ```
 

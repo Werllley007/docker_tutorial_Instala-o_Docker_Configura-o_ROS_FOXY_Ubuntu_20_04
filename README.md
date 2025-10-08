@@ -391,6 +391,8 @@ rosdep install -i --from-path src --rosdistro foxy -y
 ```
 
 ```bash
+sudo apt install python3-colcon-common-extensions -y
+
 colcon build
 ```
 

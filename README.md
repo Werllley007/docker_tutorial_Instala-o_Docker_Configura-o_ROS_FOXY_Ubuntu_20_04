@@ -224,7 +224,7 @@ docker exec -it --user werlley ros-foxy bash
 Se você estiver usando a imagem do Ubuntu 20.04 em um ambiente Docker, execute os seguintes comandos para a configuração inicial:
 
 ```bash
-apt update
+sudo apt update
 sudo apt install sudo
 ```
 
@@ -383,6 +383,9 @@ git clone https://github.com/ros/ros_tutorials.git -b foxy-devel
 
 ```bash
 # cd if you're still in the ``src`` directory with the ``ros_tutorials`` clone
+sudo apt update
+sudo apt install python3-rosdep -y
+
 cd ..
 rosdep install -i --from-path src --rosdistro foxy -y
 ```
